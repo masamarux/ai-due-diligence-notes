@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+.env
+.venv/
+
+# Django
+db.sqlite3
+media/
+
+# Node / Next
+node_modules/
+.next/
+out/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# VSCode
+.vscode/
