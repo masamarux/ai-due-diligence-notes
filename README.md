@@ -110,13 +110,14 @@ http://localhost:3000
 ### Backend
 
 ```env
+DJANGO_SECRET_KEY=s...
 OPENROUTER_API_KEY=your_api_key_here
 ```
 
 ### Frontend
 
 ```env
-DJANGO_API_URL=http://127.0.0.1:8000/api
+API_URL=http://127.0.0.1:8000/api
 ```
 
 The frontend variable is server-side only and not exposed to the browser.
