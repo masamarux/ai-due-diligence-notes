@@ -1,6 +1,6 @@
 # AI Due Diligence Notes
 
-A full-stack sample project demonstrating practical usage of Django REST Framework and Next.js to build a simple, AI-assisted due diligence tool.
+A full-stack sample project demonstrating practical usage of Django REST Framework, Next.js, and LLM-based classification to build a simple AI-assisted due diligence tool.
 
 ---
 
@@ -14,7 +14,7 @@ Users can:
 * Add notes related to each case
 * Classify notes as **Risk**, **Opportunity**, or **Neutral**
 
-The classification logic simulates an AI system using rule-based keyword matching, with a clear path for replacing it with LLM-based classification.
+The classification is powered by an LLM (via OpenRouter free models), with a rule-based fallback to ensure reliability.
 
 ---
 
@@ -26,6 +26,7 @@ The classification logic simulates an AI system using rule-based keyword matchin
 * Django
 * Django REST Framework
 * SQLite (development)
+* OpenRouter (LLM inference)
 
 ### Frontend
 
@@ -42,6 +43,7 @@ This project follows a simple but realistic full-stack architecture:
 
 * **Django REST Framework** provides a REST API using `ModelViewSet`
 * A custom endpoint (`/notes/{id}/classify/`) handles classification logic
+* Classification is performed via an LLM, with a fallback to rule-based logic
 * **Next.js API routes** act as a backend-for-frontend (BFF), proxying requests to Django
 * Environment variables are used to keep backend URLs server-side only
 
@@ -51,7 +53,8 @@ This project follows a simple but realistic full-stack architecture:
 
 * Case management (create and list)
 * Note creation per case
-* AI-like classification via backend endpoint
+* LLM-based classification via backend endpoint
+* Rule-based fallback for robustness
 * Clean UI with case selection and note filtering
 * Separation of concerns between frontend services and backend API
 
@@ -104,20 +107,28 @@ http://localhost:3000
 
 ## Environment Variables
 
-Frontend uses a server-side environment variable:
+### Backend
+
+```env
+OPENROUTER_API_KEY=your_api_key_here
+```
+
+### Frontend
 
 ```env
 DJANGO_API_URL=http://127.0.0.1:8000/api
 ```
 
-This value is not exposed to the browser.
+The frontend variable is server-side only and not exposed to the browser.
 
 ---
 
 ## Design Decisions
 
 * Used `ModelViewSet` to keep the API concise and RESTful
-* Added a custom DRF action (`classify`) to simulate AI-driven behavior
+* Implemented a custom DRF action (`classify`) to encapsulate classification logic
+* Integrated LLM-based classification using OpenRouter free models
+* Added a rule-based fallback to ensure stability and deterministic behavior
 * Implemented a BFF layer in Next.js to decouple frontend from backend implementation details
 * Kept UI minimal but structured to reflect real product thinking
 
@@ -125,16 +136,19 @@ This value is not exposed to the browser.
 
 ## Limitations
 
-* Classification is rule-based (keyword matching)
+* LLM responses may vary slightly depending on the model
 * No authentication or authorization
 * SQLite used instead of PostgreSQL
 * No background jobs or async processing
+* No caching layer for classification results
 
 ---
 
 ## Possible Improvements
 
-* Replace classification logic with LLM-based inference (OpenAI or similar)
+* Add confidence scoring for classifications
+* Introduce caching to avoid repeated LLM calls
+* Replace or extend LLM with embeddings-based classification
 * Add authentication (JWT or session-based)
 * Move to PostgreSQL for production
 * Add pagination and filtering
@@ -153,6 +167,6 @@ My primary professional experience is with:
 * API development
 * AI workflows (OpenAI, RAG, automation with Python)
 
-This project bridges that experience with Django/DRF in a practical way.
+This project bridges that experience with Django/DRF, while also incorporating practical usage of LLM-based features in a product-oriented context.
 
 ---
