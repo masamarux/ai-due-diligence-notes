@@ -1,24 +1,9 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
-
-type Case = {
-  id: number
-  title: string
-  company_name: string
-  description: string
-  created_at: string
-}
-
-type Note = {
-  id: number
-  case: number
-  content: string
-  classification: "risk" | "opportunity" | "neutral"
-  created_at: string
-}
-
-const API = "http://127.0.0.1:8000/api"
+import type { Case, Note } from './types'
+import { createCase as createCaseRequest, getCases } from './services/cases'
+import { createNote as createNoteRequest, classifyNote as classifyNoteRequest, getNotes } from './services/notes'
 
 const classificationStyles = {
   risk: "border-red-500/30 bg-red-500/10 text-red-300",
@@ -38,13 +23,10 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false)
 
   const fetchData = useCallback(async () => {
-    const [casesResponse, notesResponse] = await Promise.all([
-      fetch(`${API}/cases/`),
-      fetch(`${API}/notes/`),
+    const [casesData, notesData] = await Promise.all([
+      getCases(),
+      getNotes(),
     ])
-
-    const casesData = await casesResponse.json()
-    const notesData = await notesResponse.json()
 
     setCases(casesData)
     setNotes(notesData)
@@ -67,16 +49,10 @@ export default function Home() {
 
     setIsLoading(true)
 
-    await fetch(`${API}/cases/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title,
-        company_name: companyName,
-        description,
-      }),
+    await createCaseRequest({
+      title,
+      company_name: companyName,
+      description,
     })
 
     setTitle("")
@@ -91,15 +67,9 @@ export default function Home() {
 
     setIsLoading(true)
 
-    await fetch(`${API}/notes/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        case: selectedCaseId,
-        content: noteContent,
-      }),
+    await createNoteRequest({
+      case: selectedCaseId,
+      content: noteContent,
     })
 
     setNoteContent("")
@@ -110,9 +80,7 @@ export default function Home() {
   async function classifyNote(noteId: number) {
     setIsLoading(true)
 
-    await fetch(`${API}/notes/${noteId}/classify/`, {
-      method: "POST",
-    })
+    await classifyNoteRequest(noteId)
 
     await fetchData()
     setIsLoading(false)

@@ -2,6 +2,8 @@ from rest_framework import serializers
 from .models import Case, Note
 
 class CaseSerializer(serializers.ModelSerializer):
+    description = serializers.CharField(required=False, allow_blank=True)
+
     class Meta:
         model = Case
         fields = ['id', 'title', 'company_name', 'description', 'created_at']
